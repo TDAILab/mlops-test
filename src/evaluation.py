@@ -10,7 +10,6 @@ from sklearn.metrics import accuracy_score
 from smexperiments.tracker import Tracker
 from smexperiments.trial import Trial
 from sagemaker.analytics import ExperimentAnalytics
-import sagemaker
 
 
 def load_model():
