@@ -7,12 +7,14 @@ from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
+
 def main():
-    print(os.listdir("data/input"))
+    print(os.listdir("./notebooks/knn/data/input/"))
     df = pd.read_csv(
-        "data/input/iris.csv",
+        "./notebooks/knn/data/input/train.csv",
         header=None,
-        names=["label", "feat1", "feat2", "feat3", "feat4"])
+        names=["label", "feat1", "feat2", "feat3", "feat4"],
+    )
 
     X = df[["feat1", "feat2", "feat3", "feat4"]].values
     y = df[["label"]].values.ravel()
@@ -32,12 +34,12 @@ def main():
 
     accuracy = accuracy_score(y_test, y_predictions)
 
-    os.makedirs("data/output", exist_ok=True)
-    model_path = "data/output/model.pkl"
-    pickle.dump(clf, open(model_path, 'wb'))
+    os.makedirs("./notebooks/knn/data/output", exist_ok=True)
+    model_path = "./notebooks/knn/data/output/model.pkl"
+    pickle.dump(clf, open(model_path, "wb"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
     # A zero exit code causes the job to be marked a Succeeded.
     sys.exit(0)
