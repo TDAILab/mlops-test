@@ -1,0 +1,5 @@
+scikit-learn
+pandas
+joblib
+sagemaker-experiments==0.1.35
+sagemaker==2.73.0
