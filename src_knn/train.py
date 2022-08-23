@@ -6,6 +6,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
+
 def main():
     print(os.listdir("data/input"))
     df = pd.read_csv(
