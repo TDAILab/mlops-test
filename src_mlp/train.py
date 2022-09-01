@@ -1,6 +1,6 @@
 import os
 import sys
-import pickle
+import cloudpickle
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -161,10 +161,11 @@ def main():
 
         return train_loss_list, valid_loss_list
 
+    # torch dump
     os.makedirs("data/output", exist_ok=True)
     model_path = "data/output/model.pth"
-    # pickle.dump(model, open(model_path, 'wb'))
-    torch.save(model.to(device).state_dict(), model_path)
+    with open(model_path, mode="wb") as out:
+        cloudpickle.dump(model, out)
 
 
 if __name__ == "__main__":
