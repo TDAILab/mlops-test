@@ -162,8 +162,9 @@ def main():
         return train_loss_list, valid_loss_list
 
     os.makedirs("data/output", exist_ok=True)
-    model_path = "data/output/model.pkl"
-    pickle.dump(model, open(model_path, "wb"))
+    model_path = "data/output/model.pth"
+    # pickle.dump(model, open(model_path, 'wb'))
+    torch.save(model.to(device).state_dict(), model_path)
 
 
 if __name__ == "__main__":
