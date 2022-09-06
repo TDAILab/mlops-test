@@ -161,9 +161,9 @@ def main():
 
         return train_loss_list, valid_loss_list
 
-    # torch dump
+    # torch cloudpickle
     os.makedirs("data/output", exist_ok=True)
-    model_path = "data/output/model.pth"
+    model_path = "data/output/model.pkl"
     with open(model_path, mode="wb") as out:
         cloudpickle.dump(model, out)
 
