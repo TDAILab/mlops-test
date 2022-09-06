@@ -1,6 +1,6 @@
 import os
 import sys
-import pickle
+import cloudpickle
 import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -33,10 +33,11 @@ def main():
 
     accuracy = accuracy_score(y_test, y_predictions)
 
+    # cloudpickle
     os.makedirs("data/output", exist_ok=True)
     model_path = "data/output/model.pkl"
-    pickle.dump(clf, open(model_path, "wb"))
-    print("saved the model")
+    with open(model_path, mode="wb") as out:
+        cloudpickle.dump(clf, out)
 
 
 if __name__ == "__main__":
