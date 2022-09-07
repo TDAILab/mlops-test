@@ -10,3 +10,6 @@ def predict(model, json_input):
     prediction = np.array([prediction])
     print(f"prediction : {prediction}")
     return prediction
+
+
+# test
