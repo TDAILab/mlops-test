@@ -19,14 +19,14 @@ def fix_seed(seed=0):
 fix_seed()
 
 train_dataset = torchvision.datasets.MNIST(
-    root="data/input/train",
+    root="data/input",
     train=True,
     transform=transforms.ToTensor(),
     download=False,
 )
 
 test_dataset = torchvision.datasets.MNIST(
-    root="data/input/train",
+    root="data/input",
     train=False,
     transform=transforms.ToTensor(),
     download=False,
