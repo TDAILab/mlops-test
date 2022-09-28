@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Any
 import cloudpickle
 import torch
 import torch.nn as nn
@@ -9,15 +10,16 @@ import torchvision
 import torchvision.transforms as transforms
 
 
+# fixed random seed
 def fix_seed(seed=0):
-    # pytorch
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
 
-
 fix_seed()
 
+
+# load dataset
 train_dataset = torchvision.datasets.MNIST(
     root="data/input",
     train=True,
@@ -32,6 +34,8 @@ test_dataset = torchvision.datasets.MNIST(
     download=False,
 )
 
+
+# converts to batch size
 batch_size = 256
 
 train_loader = torch.utils.data.DataLoader(
@@ -42,8 +46,9 @@ test_loader = torch.utils.data.DataLoader(
     dataset=test_dataset, batch_size=batch_size, shuffle=False
 )
 
-num_classes = 10
 
+# define network
+num_classes = 10    #number of outputs
 
 class Net(nn.Module):
     def __init__(self):
@@ -52,6 +57,7 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(1024, 512)
         self.fc3 = nn.Linear(512, num_classes)
 
+    # define forward propagation
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -59,43 +65,47 @@ class Net(nn.Module):
         return x
 
 
+# transfers network to GPU
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = Net().to(device)
 
-# 損失関数の設定
+
+# setting up a loss function
 criterion = nn.CrossEntropyLoss()
 
-# 最適化手法を設定
+
+# use SGD as optimization algorithm
 optimizer = optim.SGD(model.parameters(), lr=0.01)
 
 
-def train_fn(model, train_loader, criterion, optimizer, device="cpu"):
+# epoch learning
+def train_fn(model: Net, train_loader, criterion: nn.CrossEntropyLoss, optimizer: optim.SGD, device="cpu") -> float:
 
     # 1epoch training
     train_loss = 0.0
     num_train = 0
 
-    # model 学習モードに設定
+    # set to model learning mode
     model.train()
 
     for i, (images, labels) in enumerate(train_loader):
-        # batch数を累積
+        # accumulate batch counts
         num_train += len(labels)
 
-        # viewで1次元配列に変更
-        # toでgpuに転送
+        # change to 1D array with view
+        # transfer to gpu with to
         images, labels = images.view(-1, 28 * 28).to(device), labels.to(device)
-        # 勾配をリセット
+        # reset gradient
         optimizer.zero_grad()
-        # 推論
+        # inference
         outputs = model(images)
-        # lossを計算
+        # calculate loss
         loss = criterion(outputs, labels)
-        # 誤差逆伝播
+        # error back propagation
         loss.backward()
-        # パラメータ更新
+        # update parameters
         optimizer.step()
-        # lossを累積
+        # accumulate loss
         train_loss += loss.item()
 
     train_loss = train_loss / num_train
@@ -103,16 +113,17 @@ def train_fn(model, train_loader, criterion, optimizer, device="cpu"):
     return train_loss
 
 
-def valid_fn(model, train_loader, criterion, optimizer, device="cpu"):
+# inference
+def valid_fn(model: Net, train_loader, criterion: nn.CrossEntropyLoss, optimizer: optim.SGD, device="cpu") -> float:
 
-    # 評価用のコード
+    # code for evaluation
     valid_loss = 0.0
     num_valid = 0
 
-    # model 評価モードに設定
+    # model set to evaluation mode
     model.eval()
 
-    # 評価の際に勾配を計算しないようにする
+    # do not calculate gradient during evaluation
     with torch.no_grad():
         for i, (images, labels) in enumerate(test_loader):
             num_valid += len(labels)
@@ -129,16 +140,9 @@ def valid_fn(model, train_loader, criterion, optimizer, device="cpu"):
 print("learning...")
 
 
+# model Learning
 def main():
-    def run(
-        model,
-        train_loader,
-        test_loader,
-        criterion,
-        optimizer,
-        device="cpu",
-        num_epochs=10,
-    ):
+    def run(model: Net, train_loader, test_loader, criterion: nn.CrossEntropyLoss, optimizer: optim.SGD, device="cpu", num_epochs=10) -> list:
 
         train_loss_list = []
         valid_loss_list = []
@@ -161,7 +165,7 @@ def main():
 
         return train_loss_list, valid_loss_list
 
-    # torch cloudpickle
+    # save the model
     os.makedirs("data/output", exist_ok=True)
     model_path = "data/output/model.pkl"
     with open(model_path, mode="wb") as out:
