@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 def main():
     print(os.listdir("data/input"))
     df = pd.read_csv(
-        "data/input/train/train.csv",
+        "data/input/train.csv",
         header=None,
         names=["label", "feat1", "feat2", "feat3", "feat4"])
 
